@@ -48,15 +48,15 @@ You can install Postman via this website: https://www.postman.com/downloads/
     (You might want to use `cargo check` if you only need to verify your work without running the app.)
 
 ## Mandatory Checklists (Publisher)
--   [ ] Clone https://gitlab.com/ichlaffterlalu/bambangshop to a new repository.
+-   [x] Clone https://gitlab.com/ichlaffterlalu/bambangshop to a new repository.
 -   **STAGE 1: Implement models and repositories**
-    -   [ ] Commit: `Create Subscriber model struct.`
-    -   [ ] Commit: `Create Notification model struct.`
-    -   [ ] Commit: `Create Subscriber database and Subscriber repository struct skeleton.`
-    -   [ ] Commit: `Implement add function in Subscriber repository.`
-    -   [ ] Commit: `Implement list_all function in Subscriber repository.`
-    -   [ ] Commit: `Implement delete function in Subscriber repository.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
+    -   [x] Commit: `Create Subscriber model struct.`
+    -   [x] Commit: `Create Notification model struct.`
+    -   [x] Commit: `Create Subscriber database and Subscriber repository struct skeleton.`
+    -   [x] Commit: `Implement add function in Subscriber repository.`
+    -   [x] Commit: `Implement list_all function in Subscriber repository.`
+    -   [x] Commit: `Implement delete function in Subscriber repository.`
+    -   [x] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
 -   **STAGE 2: Implement services and controllers**
     -   [ ] Commit: `Create Notification service struct skeleton.`
     -   [ ] Commit: `Implement subscribe function in Notification service.`
@@ -77,6 +77,29 @@ This is the place for you to write reflections:
 ### Mandatory (Publisher) Reflections
 
 #### Reflection Publisher-1
+<ol>
+    <li>
+    Dalam pola Observer tradisional (seperti di buku Head First Design Patterns), penggunaan interface (atau Trait di Rust) sangat disarankan karena Publisher biasanya perlu memberi tahu berbagai class atau tipe Observer yang berbeda-beda. Interface memastikan bahwa apa pun class objeknya, mereka semua memiliki metode update() yang sama. <br> <br>
+    Namun, dalam kasus khusus BambangShop ini, satu struct Model saja sudah cukup, karena implementasi kita bergantung pada webhook (HTTP request). Dari sudut pandang Publisher, semua subscriber diperlakukan persis sama: mereka hanyalah sebuah url tujuan yang siap menerima data (payload) JSON. Publisher tidak peduli apakah penerimanya adalah aplikasi mobile, web server, atau bot Discord. Kecuali kita berencana menambahkan observer internal (seperti observer khusus untuk logging internal atau pengirim email) di samping webhook, sebuah struct sederhana yang menyimpan URL sudah sangat memadai.
+    </li>
+    <br>
+    <li>
+    Meskipun secara teknis kita bisa saja menggunakan Vec (list), menggunakan DashMap (map/dictionary) sangat diperlukan dan jauh lebih unggul untuk kasus ini. Nilai id pada Program dan url pada Subscriber ditujukan agar bersifat unik. Jika kita menggunakan Vec, setiap kali ada user yang melakukan subscribe, kita harus mengecek seluruh isi list satu per satu (kompleksitas waktu O(n)) hanya untuk memastikan URL tersebut belum ada, demi mencegah duplikasi. Begitu juga saat unsubscribe, kita harus mencari lagi di seluruh list. Tetapi dengan DashMap, kita tidak perlu memastikan keunikan lagi karena DashMap sudah menjamin bahwa setiap key (dalam hal ini url) hanya bisa ada satu. Kita bisa langsung menambahkan atau menghapus subscriber berdasarkan URL tanpa perlu iterasi, sehingga kompleksitas waktu menjadi O(1). Selain itu, DashMap juga memberikan thread safety yang lebih baik jika kita berencana untuk mengakses data secara bersamaan dari beberapa thread.
+    </li>
+    <br>
+    <li>
+        <ul>
+        <li>Singleton adalah pola desain creational yang memastikan sebuah class hanya memiliki satu instance (objek) global dan menyediakan satu titik akses global ke objek tersebut. </li>
+        <br>
+        <li>DashMap adalah struktur data konkuren yang dirancang khusus untuk membaca dan menulis data secara aman dari berbagai thread (thread-safe).</li>
+        </ul> 
+        <br>
+    Di bahasa Rust, framework web seperti Rocket menggunakan banyak worker thread untuk menangani request HTTP secara bersamaan. Jika kita menerapkan pola Singleton yang di dalamnya menyimpan HashMap biasa, compiler Rust yang sangat ketat akan tetap memblokir kode kita. Hal ini karena beberapa thread bisa saja mencoba membaca dan menulis ke HashMap tersebut di waktu yang bersamaan, sehingga menyebabkan data race (tabrakan data).
+    <br>
+    <br>
+    Untuk membuat sebuah Singleton menjadi thread-safe di Rust, kita harus membungkus datanya dengan alat sinkronisasi seperti Mutex atau RwLock (misalnya menjadi Mutex<HashMap>). DashMap pada dasarnya adalah alternatif dari Mutex<HashMap> yang sudah sangat dioptimalkan untuk konkurensi (sistem lock-nya diurus di balik layar agar lebih cepat). Jadi, meskipun kita menerapkan pola Singleton, kita tetap wajib menggunakan struktur data yang thread-safe seperti DashMap (atau Mutex) untuk memenuhi aturan keamanan multithreading di Rust.
+    </li>
+</ol>
 
 #### Reflection Publisher-2
 
