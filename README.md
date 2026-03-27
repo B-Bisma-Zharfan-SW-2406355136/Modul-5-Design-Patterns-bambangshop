@@ -145,3 +145,27 @@ This is the place for you to write reflections:
 </ol>
 
 #### Reflection Publisher-3
+
+<ol>
+    <li>
+    Dalam tutorial BambangShop, kita menggunakan Push model. Hal ini terlihat pada bagian kode di mana aplikasi Main (Publisher) secara proaktif membuat dan mengirimkan data secara penuh (yakni payload Notifikasi) langsung ke alamat URL masing-masing Subscriber melalui HTTP POST request.
+    </li>
+    <br>
+    <li>
+    Jika kita menggunakan Pull model (di mana Publisher hanya sekadar memberi sinyal "Hei, ada produk baru!" tanpa mengirim detail datanya, dan Subscriber yang harus "menarik/meminta" data tersebut):
+    <br>
+    <br>
+    Kelebihan (Advantages): Subscriber memiliki kontrol penuh kapan mereka siap menerima atau memproses data. Ini akan mencegah server Subscriber kelebihan beban (overload) jika sewaktu-waktu terjadi lonjakan notifikasi yang sangat masif. Subscriber juga bisa memilih untuk hanya menarik data yang benar-benar mereka butuhkan.
+    <br>
+    <br>
+    Kekurangan (Disadvantages): Sistem menjadi lebih lambat (latency tinggi) dan tidak se- real-time Push model. Akan terjadi inefisiensi pada jaringan karena memerlukan dua kali komunikasi bolak-balik (Pemberitahuan dari Publisher -> Request minta data dari Subscriber -> Pengiriman data dari Publisher). Padahal, data notifikasi di tutorial ini (seperti tipe dan judul produk) ukurannya sangat kecil dan akan jauh lebih efisien jika langsung dikirim sekaligus.
+    </li>
+    <br>
+    <li>
+    Jika kita tidak menggunakan multi-threading (seperti thread::spawn yang ada pada kode NotificationService), maka proses pengiriman notifikasi akan berjalan secara sekuensial (berurutan) dan blocking.
+    Artinya, aplikasi Publisher harus menunggu pengiriman HTTP Request ke Subscriber pertama selesai (menunggu response atau timeout), baru kemudian berlanjut mengirim ke Subscriber kedua, dan seterusnya.
+    <br>
+    <br>
+    Dampaknya akan sangat fatal jika jumlah Subscriber sudah mencapai ribuan, atau jika ada salah satu server Subscriber yang sedang mati/lambat. Proses (thread) utama pada aplikasi Publisher akan tertahan (bottleneck). Pengguna yang memicu notifikasi tersebut (misalnya, admin yang sedang mengklik tombol "Create Product") harus melihat layar loading yang sangat lama hanya karena sistem di belakang layar sedang sibuk mengantre untuk menelepon Subscriber satu per satu. Dengan multi-threading, semua pengiriman itu dijalankan secara bersamaan di latar belakang (background), sehingga pengguna tetap bisa berinteraksi dengan aplikasi tanpa gangguan.
+    </li>
+</ol>
