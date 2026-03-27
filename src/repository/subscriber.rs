@@ -1,6 +1,7 @@
 use dashmap::DashMap;
 use lazy_static::lazy_static;
 use crate::model::notification::Notification;
+use crate::model::subscriber::Subscriber;
 
 lazy_static! {
     static ref SUBSCRIBERS: DashMap<String, DashMap<String, Subscriber>> = DashMap::new();
@@ -20,12 +21,12 @@ impl SubscriberRepository{
         return subscriber;
     }
 
-    pub fn list_all(product_type: &str, url: &str) -> Vec<Subscriber> {
+    pub fn list_all(product_type: &str, _url: &str) -> Vec<Subscriber> {
         if SUBSCRIBERS.get(product_type).is_none(){
             SUBSCRIBERS.insert(String::from(product_type), DashMap::new());
         };
 
-        return SUBSCRIBER.get(product_type).unwrap().iter()
+        return SUBSCRIBERS.get(product_type).unwrap().iter()
             .map(|f| f.value().clone()).collect();
     }
 
