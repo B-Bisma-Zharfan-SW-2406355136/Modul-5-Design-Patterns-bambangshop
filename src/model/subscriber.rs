@@ -13,7 +13,8 @@ pub struct Subscriber {
     pub name: String,
 }
 impl Subscriber {
-    pub async fn update(&self, payload: &Notification) {
+    #[tokio::main]
+    pub async fn update(&self, payload: Notification) {
        REQWEST_CLIENT
             .post(&self.url)
             .header("Content-Type", "JSON")
