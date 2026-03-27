@@ -27,7 +27,7 @@ impl NotificationService {
         return Ok(subscriber_result.unwrap());
     }
 
-    pub fn notify(&self, product_type: &str, product: Product, status: &str) {
+    pub fn notify(&self, product_type: &str,  status: &str, product: Product) {
         let mut payload: Notification = Notification {
             product_type: String::from(product_type),
             product_title: product.clone().title,
