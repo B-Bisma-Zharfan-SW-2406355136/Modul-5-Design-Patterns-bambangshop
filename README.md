@@ -58,12 +58,12 @@ You can install Postman via this website: https://www.postman.com/downloads/
     -   [x] Commit: `Implement delete function in Subscriber repository.`
     -   [x] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
 -   **STAGE 2: Implement services and controllers**
-    -   [ ] Commit: `Create Notification service struct skeleton.`
-    -   [ ] Commit: `Implement subscribe function in Notification service.`
-    -   [ ] Commit: `Implement subscribe function in Notification controller.`
-    -   [ ] Commit: `Implement unsubscribe function in Notification service.`
-    -   [ ] Commit: `Implement unsubscribe function in Notification controller.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
+    -   [x] Commit: `Create Notification service struct skeleton.`
+    -   [x] Commit: `Implement subscribe function in Notification service.`
+    -   [x] Commit: `Implement subscribe function in Notification controller.`
+    -   [x] Commit: `Implement unsubscribe function in Notification service.`
+    -   [x] Commit: `Implement unsubscribe function in Notification controller.`
+    -   [x] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
 -   **STAGE 3: Implement notification mechanism**
     -   [ ] Commit: `Implement update method in Subscriber model to send notification HTTP requests.`
     -   [ ] Commit: `Implement notify function in Notification service to notify each Subscriber.`
@@ -102,5 +102,46 @@ This is the place for you to write reflections:
 </ol>
 
 #### Reflection Publisher-2
+
+<ol>
+    <li>
+    Berdasarkan prinsip desain perangkat lunak, terutama Single Responsibility Principle (SRP) dan Separation of Concerns, menggabungkan logika bisnis dan akses penyimpanan data ke dalam satu "Model" (seperti pada arsitektur MVC tradisional) akan membuat class tersebut menjadi sangat besar dan sulit dikelola (fat model). Dengan memecahnya menjadi tiga bagian:
+    <br>
+    <br>
+    <ol>
+        <li>Model: Hanya berfokus untuk merepresentasikan struktur data (cetakan objek).</li>
+        <li>Repository: Bertanggung jawab khusus untuk operasi akses data (seperti Create, Read, Update, Delete ke database atau struktur data di memori).</li>
+        <li>Service: Bertanggung jawab khusus untuk logika bisnis (business rules). Service bertindak sebagai konduktor yang memvalidasi data dan mengoordinasikan Repository mana yang harus dipanggil.</li>
+    </ol>
+    <br>
+    Pemisahan ini membuat kode menjadi lebih modular, mudah diuji secara terisolasi (unit testing), dan lebih fleksibel.
+    </li>
+    <br>
+    <li>
+    Jika kita hanya menggunakan Model untuk melakukan semuanya, akan terjadi tingkat ketergantungan (tight coupling) yang sangat tinggi antar model. Model-model tersebut akan menjelma menjadi "God Object" (objek yang tahu dan melakukan terlalu banyak hal).
+    <br>
+    <br>
+    Misalnya saat sebuah Program baru ditambahkan, model Program harus menulis kodenya sendiri untuk mencari siapa saja Subscriber-nya, lalu memicu pembuatan Notification, dan mengirimkannya. Model Program menjadi sangat terikat dengan detail implementasi Subscriber dan Notification. Kompleksitas kode akan meningkat drastis; kode menjadi sulit dibaca, sulit dilacak (di-debug), dan rentan rusak. Perubahan kecil pada fitur Notifikasi bisa saja mengharuskan kita membongkar ulang kode di dalam model Program.
+    </li>
+    <br>
+    <li>
+    Postman sangat membantu dalam menguji backend API yang sedang saya kembangkan. Alat ini memungkinkan saya untuk bertindak sebagai klien (layaknya browser atau aplikasi mobile) untuk mengirimkan HTTP Request (GET, POST, DELETE) dan melihat HTTP Response beserta data JSON-nya secara langsung, tanpa harus repot-repot membuat tampilan antarmuka (frontend/UI) terlebih dahulu.
+    <br>
+    <br>
+    Beberapa fitur Postman yang menurut saya sangat menarik dan akan sangat membantu dalam Group Project atau pengerjaan perangkat lunak di masa depan antara lain:
+    <br>
+    <br>
+    <ol>
+        <li>
+        Collections: Memungkinkan tim untuk menyimpan, mengelompokkan, dan membagikan daftar request API secara rapi, sehingga seluruh anggota tim (terutama frontend dan backend) memiliki acuan API yang sama.
+        </li>
+        <li>
+        Environments & Variables: Fitur ini memudahkan kita untuk menyimpan URL dasar sebagai variabel. Kita bisa dengan mudah beralih dari pengujian server lokal (http://localhost:8000) ke server production yang sudah di-deploy hanya dengan mengganti Environment, tanpa perlu mengedit URL di setiap request satu per satu.
+        </li>
+        <li>
+        Automated Testing: Postman menyediakan tab Tests di mana kita bisa menulis script untuk memvalidasi apakah status response (misalnya harus 200 OK) dan format data kembaliannya sudah sesuai ekspektasi secara otomatis.
+        </li>
+    </ol>
+</ol>
 
 #### Reflection Publisher-3
